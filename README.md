@@ -49,7 +49,7 @@ Install the following libraries using the IDE Library manager.
 Install the following library by downloading a zip file from github.com then
 use the IDE "Add .ZIP library" option to install it.
 
-* https://github.com/switch_tinyusb/
+* https://github.com/touchgadget/switch_tinyusb/
 
 ## IDE Tools options required
 
