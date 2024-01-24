@@ -28,7 +28,7 @@ Base 11         |LSB (joystick button)
 Base 12         |RSB (joystick button)
 
 Note #1: Move the hat switch forward/back to move the right joystick
-forward/back. Moving the hat switch in other directions has no effect.
+forward/back. Moving the hat switch in side to side has no effect.
 
 ## Hardware
 
@@ -66,6 +66,8 @@ use the IDE "Add .ZIP library" option to install it.
 * Set "Board" to "Adafruit Feather RP2040 USB Host"
 * Set "USB Stack" to "Adafruit TinyUSB"
 * Set "CPU Speed" to 120MHz.
+
+![Arduino IDE build options](./images/switch_onehand_build_options.jpg)
 
 ## Case for the RP2040 Feather with USB Type A Host board
 

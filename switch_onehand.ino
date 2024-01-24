@@ -13,7 +13,7 @@
 /*********************************************************************
 MIT License
 
-Copyright (c) 2023 touchgadgetdev@gmail.com
+Copyright (c) 2023, 2024 touchgadgetdev@gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -62,6 +62,50 @@ SOFTWARE.
 #define DBG_println(...)
 #define DBG_printf(...)
 #endif
+
+#define DPAD_NORTH  (0)
+#define DPAD_NE     (1)
+#define DPAD_EAST   (2)
+#define DPAD_SE     (3)
+#define DPAD_SOUTH  (4)
+#define DPAD_SW     (5)
+#define DPAD_WEST   (6)
+#define DPAD_NW     (7)
+
+typedef struct {
+  uint8_t x;
+  uint8_t y;
+} DPAD_COORDS_t;
+
+const uint8_t AXIS_MIN = 0;
+const uint8_t AXIS_MID = 127;
+const uint8_t AXIS_MAX = 255;
+
+#define DPAD_MAX (8)
+const DPAD_COORDS_t DPAD_TABLE[DPAD_MAX] = {
+  {AXIS_MID, AXIS_MIN}, // DPAD NORTH
+  {AXIS_MAX, AXIS_MIN}, // DPAD NORTH EAST
+  {AXIS_MAX, AXIS_MID}, // DPAD EAST
+  {AXIS_MAX, AXIS_MAX}, // DPAD SOUTH EAST
+  {AXIS_MID, AXIS_MAX}, // DPAD SOUTH
+  {AXIS_MIN, AXIS_MAX}, // DPAD SOUTH WEST
+  {AXIS_MIN, AXIS_MID}, // DPAD WEST
+  {AXIS_MIN, AXIS_MIN}, // DPAD NORTH WEST
+};
+
+uint8_t DPAD_Y(uint8_t hat) {
+  if (hat < DPAD_MAX) {
+    return DPAD_TABLE[hat].y;
+  }
+  return AXIS_MID;
+}
+
+uint8_t DPAD_X(uint8_t hat) {
+  if (hat < DPAD_MAX) {
+    return DPAD_TABLE[hat].x;
+  }
+  return AXIS_MID;
+}
 
 // Logitech Extreme 3D Pro flight joystick report layout
 // Large joystick X, Y, Z (twist) axes
@@ -192,13 +236,7 @@ void loop() {
           int left_y_joystick = map(rpt->y, Le3dp.Y_Control.MIN,
               Le3dp.Y_Control.MAX, 0, 255);
           int right_x_joystick = rpt->twist;
-          int right_y_joystick = 127;
-          if (rpt->hat == NSGAMEPAD_DPAD_UP) {
-            right_y_joystick = 0;
-          }
-          else if (rpt->hat == NSGAMEPAD_DPAD_DOWN) {
-            right_y_joystick = 255;
-          }
+          int right_y_joystick = DPAD_Y(rpt->hat);
           if ((abs(left_x_joystick - 127) > Le3dp.X_Control.DEADZONE) ||
               (abs(left_y_joystick - 127) > Le3dp.Y_Control.DEADZONE) ||
               (abs(right_x_joystick - 127) > Le3dp.X_Control.DEADZONE) ||
@@ -270,6 +308,8 @@ void loop1()
   USBHost.task();
 }
 
+extern "C" {
+
 // Invoked when device with hid interface is mounted
 // Report descriptor is also available for use.
 // tuh_hid_parse_report_descriptor() can be used to parse common/simple enough
@@ -321,3 +361,5 @@ void tuh_hid_report_received_cb(uint8_t dev_addr, uint8_t instance, uint8_t cons
     DBG_printf("Error: cannot request to receive report\r\n");
   }
 }
+
+} // extern "C"
